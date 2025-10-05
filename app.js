@@ -112,3 +112,5 @@ app.get("/", (_, res) => {
 app.listen(PORT, () => {
     console.log("ready")
 });
+
+export default app;
