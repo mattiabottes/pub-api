@@ -44,6 +44,13 @@ export const transit = async (origin = "", destination = "", departureTime = new
     return response;
 }
 
+export const route = async (origin = "", destination = "", departureTime = new Date().toISOString()) => {
+    const params = new URLSearchParams({ origin, destination, departureTime, return: "polyline", ...DEFAULT_PARAMS });
+    const response = await request(TRANSIT_ENDPOINT, params);
+
+    return response;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -105,6 +112,34 @@ app.get("/transit", async (req, res) => {
 
     const response = await transit(origin, destination, departureTime);
     res.json(response);
+})
+
+app.get("/route", async (req, res) => {
+    const origin = req.query.origin;
+    const destination = req.query.destination;
+    const departureTime = req.query.departureTime;
+
+    if (!origin) {
+        res.json({error: "'origin' parameter is mandatory"});
+
+        return;
+    }
+
+    if (!destination) {
+        res.json({error: "'origin' parameter is mandatory"});
+
+        return;
+    }
+
+    const response = await route(origin, destination, departureTime);
+    
+    let polylines = [];
+    for (const route of response.routes) {
+        for (const section of route.sections) {
+            polylines.push(section.polyline)
+        }
+    }
+    res.json(polylines);
 })
 
 app.get("/", (_, res) => {
