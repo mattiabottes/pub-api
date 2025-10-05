@@ -16,6 +16,7 @@
     "REST"
   ],
   "author": "Mattia Bottes",
+  "type": "module",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/mattiabottes/pub-api/issues"
