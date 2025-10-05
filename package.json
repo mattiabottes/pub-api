@@ -24,7 +24,7 @@
   "homepage": "https://github.com/mattiabottes/pub-api#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
+    "dotenv": "^16.4.7",
     "express": "^5.1.0"
   }
 }
