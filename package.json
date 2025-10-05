@@ -1,0 +1,29 @@
+{
+  "name": "pub-api",
+  "version": "1.0.0",
+  "description": "Pub API rest services",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattiabottes/pub-api.git"
+  },
+  "keywords": [
+    "pub",
+    "api",
+    "REST"
+  ],
+  "author": "Mattia Bottes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mattiabottes/pub-api/issues"
+  },
+  "homepage": "https://github.com/mattiabottes/pub-api#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
+  }
+}
