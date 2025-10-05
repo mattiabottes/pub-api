@@ -71,13 +71,15 @@ app.get("/autosuggest", async(req, res) => {
  
     const items = response.items.filter(i => i.address).map(i => {
         return {
+            id: i.id,
             type: i.resultType,
             title: i.title,
             address: i.address.label,
             position: {
                 latitude: i.position.lat,
                 longitude: i.position.lng
-            }
+            },
+            category: i.categories ? i.categories.find(i => i.primary).id : null
         }
     });
 
