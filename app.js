@@ -1,6 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import serverless from "serverless-http";
 
 dotenv.config();
 
@@ -109,4 +110,4 @@ app.get("/", (_, res) => {
     res.json({ status: 200 })
 })
 
-app.listen(PORT);
+export default serverless(app);
