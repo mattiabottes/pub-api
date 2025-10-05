@@ -47,10 +47,8 @@ export const transit = async (origin = "", destination = "", departureTime = new
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
-
 
 app.get("/autosuggest", async(req, res) => {
     const q = req.query.q;
@@ -83,7 +81,7 @@ app.get("/autosuggest", async(req, res) => {
         }
     });
 
-    res.send(items);
+    res.json(items);
 })
 
 app.get("/transit", async (req, res) => {
@@ -104,9 +102,11 @@ app.get("/transit", async (req, res) => {
     }
 
     const response = await transit(origin, destination, departureTime);
-    res.send(response);
+    res.json(response);
 })
 
-app.listen(PORT, async () => {
-  console.log("server started");
-});
+app.get("/", (_, res) => {
+    res.json({ status: 200 })
+})
+
+app.listen(PORT);
