@@ -38,7 +38,7 @@ export const autosuggest = async (q = "", lat = 0, lon = 0) => {
 }
 
 export const transit = async (origin = "", destination = "", departureTime = new Date().toISOString()) => {
-    const params = new URLSearchParams({ origin, destination, departureTime, ...DEFAULT_PARAMS });
+    const params = new URLSearchParams({ origin, destination, departureTime, return: "intermediate", ...DEFAULT_PARAMS });
     const response = await request(TRANSIT_ENDPOINT, params);
 
     return response;
