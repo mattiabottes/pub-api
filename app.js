@@ -187,9 +187,6 @@ app.get("/route", async (req, res) => {
   res.json(polylines);
 });
 
-//http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/autocompletaStazione/avio
-//http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/partenze/S02050/Sun%20Oct%2019%202025%2010:33:45%20GMT+0200%20(Ora%20legale%20dell%E2%80%99Europa%20centrale)
-
 app.get("/", (_, res) => {
   res.json({ status: 200 });
 });
