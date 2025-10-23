@@ -51,13 +51,16 @@ export const route = async (origin = "", destination = "", departureTime = new D
   return response;
 };
 
-const getTrenitaliaStationCode = async (stationName) => {
+const getTrenitaliaStationCodes = async (stationName) => {
   const res = await fetch(`http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/autocompletaStazione/${stationName}`);
   const data = await res.text();
 
-  const [_, code] = data.split("|");
+  const codes = data
+    .trim()
+    .split("\n")
+    .map((i) => i.split("|")[1]);
 
-  return code.trim();
+  return codes;
 };
 
 const getTrenitaliaTrains = async (stationCode, date) => {
@@ -137,13 +140,20 @@ app.get("/transit", async (req, res) => {
       if (section.type === "transit" && section.agency.name === "TRENITALIA") {
         const station = section.departure.place.name;
 
-        const stationCode = await getTrenitaliaStationCode(station);
-        const trains = await getTrenitaliaTrains(stationCode, section.departure.time);
-        if (trains.length > 0) {
+        let solutions = false;
+        const codes = await getTrenitaliaStationCodes(station);
+        for (const stationCode of codes) {
+          const trains = await getTrenitaliaTrains(stationCode, section.departure.time);
           const train = trains.find((i) => i.orarioPartenza === new Date(section.departure.time).getTime());
+          if (train) {
+            sections.push({ ...section, delay: train.ritardo });
+            solutions = true;
 
-          sections.push({ ...section, delay: train.ritardo });
-        } else {
+            break;
+          }
+        }
+
+        if (!solutions) {
           sections.push(section);
         }
       } else {
