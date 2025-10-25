@@ -70,6 +70,13 @@ const getTrenitaliaTrains = async (stationCode, date) => {
   return data;
 };
 
+const getTrenitaliaRoute = async (stationCode, trainCode, date) => {
+  const res = await fetch(`http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/andamentoTreno/${stationCode}/${trainCode}/${date}`);
+  const data = await res.json();
+
+  return data;
+};
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -100,6 +107,22 @@ app.get("/trainInfos", async (req, res) => {
   }
 
   res.json(infos);
+});
+
+app.get("/trainRoute", async (req, res) => {
+  const station = req.query.station;
+  const train = req.query.train;
+  const date = req.query.date;
+
+  if (!station || !train || !date) {
+    res.json({ error: "'station', 'train' and 'date' params are mandatory" });
+
+    return;
+  }
+
+  const routes = await getTrenitaliaRoute(station, train, date);
+
+  res.json(routes);
 });
 
 app.get("/autosuggest", async (req, res) => {
