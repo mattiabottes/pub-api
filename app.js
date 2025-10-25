@@ -76,6 +76,32 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/trainInfos", async (req, res) => {
+  let infos = {};
+
+  const station = req.query.station;
+  const date = req.query.date;
+
+  if (!station || !date) {
+    res.json({ error: "'station' and 'date' params are mandatory" });
+
+    return;
+  }
+
+  const codes = await getTrenitaliaStationCodes(station);
+  for (const code of codes) {
+    const trains = await getTrenitaliaTrains(code, date);
+    const train = trains.find((i) => i.orarioPartenza === new Date(date).getTime());
+    if (train) {
+      infos = train;
+
+      break;
+    }
+  }
+
+  res.json(infos);
+});
+
 app.get("/autosuggest", async (req, res) => {
   const q = req.query.q;
   const lat = req.query.lat || 0;
@@ -131,41 +157,7 @@ app.get("/transit", async (req, res) => {
     return;
   }
 
-  let response = await transit(origin, destination, departureTime);
-
-  try {
-    let sections = [];
-
-    for (const section of response.routes[0].sections) {
-      if (section.type === "transit" && section.agency.name === "TRENITALIA") {
-        const station = section.departure.place.name;
-
-        let solutions = false;
-        const codes = await getTrenitaliaStationCodes(station);
-        for (const stationCode of codes) {
-          const trains = await getTrenitaliaTrains(stationCode, section.departure.time);
-          const train = trains.find((i) => i.orarioPartenza === new Date(section.departure.time).getTime());
-          if (train) {
-            sections.push({ ...section, delay: train.ritardo });
-            solutions = true;
-
-            break;
-          }
-        }
-
-        if (!solutions) {
-          sections.push(section);
-        }
-      } else {
-        sections.push(section);
-      }
-    }
-
-    response.routes[0].sections = sections;
-  } catch (err) {
-    console.log(err);
-  }
-
+  const response = await transit(origin, destination, departureTime);
   res.json(response);
 });
 
