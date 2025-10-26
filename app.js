@@ -77,6 +77,13 @@ const getTrenitaliaRoute = async (stationCode, trainCode, date) => {
   return data;
 };
 
+const getTrenitaliaStationDetails = async (stationCode) => {
+  const res = await fetch(`http://www.viaggiatreno.it/infomobilita/resteasy/viaggiatreno/dettaglioStazione/${stationCode}/9`);
+  const data = await res.json();
+
+  return data;
+};
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -122,7 +129,14 @@ app.get("/trainRoute", async (req, res) => {
 
   const routes = await getTrenitaliaRoute(station, train, date);
 
-  res.json(routes);
+  let stops = [];
+  for (const stop of routes.fermate) {
+    const details = await getTrenitaliaStationDetails(stop.id);
+
+    stops.push({ ...stop, lat: details.lat, lon: details.lon });
+  }
+
+  res.json(stops);
 });
 
 app.get("/autosuggest", async (req, res) => {
